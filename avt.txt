@@ -1,0 +1,186 @@
+1]Interactive Sales Dashboard:-
+import streamlit as st
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+data = {
+    "Month": ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
+    "Sales": [12000, 15000, 18000, 14000, 22000, 25000],
+    "Profit": [2000, 2500, 3000, 1800, 4000, 5000],
+    "Expenses": [8000, 9000, 10000, 8500, 12000, 13000],
+    "Category": ["A", "B", "A", "C", "B", "C"]
+}
+df = pd.DataFrame(data)
+st.title("Interactive Sales Dashboard")
+st.sidebar.header("Filters")
+selected_months = st.sidebar.multiselect(
+    "Select Months",
+    options=df["Month"].unique(),
+    default=df["Month"].unique()
+)
+selected_category = st.sidebar.selectbox(
+    "Select Category",
+    options=["All"] + list(df["Category"].unique())
+)
+sales_threshold = st.sidebar.slider(
+    "Minimum Sales",
+    min_value=int(df["Sales"].min()),
+    max_value=int(df["Sales"].max()),
+    value=int(df["Sales"].min())
+)
+filtered_df = df[df["Month"].isin(selected_months)]
+if selected_category != "All":
+    filtered_df = filtered_df[filtered_df["Category"] == selected_category]
+filtered_df = filtered_df[filtered_df["Sales"] >= sales_threshold]
+st.dataframe(filtered_df)
+st.subheader("Sales Trend")
+fig, ax = plt.subplots()
+ax.plot(filtered_df["Month"], filtered_df["Sales"], marker="o")
+st.pyplot(fig)
+st.subheader("Profit Chart")
+fig, ax = plt.subplots()
+ax.bar(filtered_df["Month"], filtered_df["Profit"])
+st.pyplot(fig)
+st.subheader("Sales vs Expenses")
+fig, ax = plt.subplots()
+ax.scatter(filtered_df["Sales"], filtered_df["Expenses"])
+st.pyplot(fig)
+
+
+Run with:
+streamlit run Practice.py
+
+2] Accessible Visualization with Sonification
+import streamlit as st
+import pandas as pd
+import plotly.express as px
+import pyttsx3
+engine = pyttsx3.init()
+data = {
+    "Category": ["A", "B", "C", "D", "E"],
+    "Value": [10, 25, 15, 30, 20]
+}
+df = pd.DataFrame(data)
+st.title("Accessible Multimodal Visualization")
+selected_category = st.selectbox("Select Category", df["Category"])
+filtered_df = df[df["Category"] == selected_category]
+fig = px.bar(
+    filtered_df,
+    x="Category",
+    y="Value",
+    color="Category",
+    text="Value"
+)
+st.plotly_chart(fig)
+value = int(filtered_df["Value"].values[0])
+summary = f"Category {selected_category} has value {value}"
+st.write(summary)
+if st.button("Play Audio"):
+    engine.say(summary)
+    engine.runAndWait()
+st.dataframe(df)
+
+Run with:
+streamlit run Sonification.py
+
+
+
+
+3] Student Performance Dashboard
+import streamlit as st
+import pandas as pd
+import matplotlib.pyplot as plt
+st.title("Student Performance Dashboard")
+data = {
+    "Name": ["Amit", "Neha", "Rahul", "Sneha", "Kiran"],
+    "Math": [85, 92, 70, 88, 60],
+    "Science": [78, 88, 65, 90, 55],
+    "English": [90, 95, 72, 85, 65]
+}
+df = pd.DataFrame(data)
+st.dataframe(df)
+subject = st.selectbox("Select Subject", ["Math", "Science", "English"])
+min_marks = st.slider("Minimum Marks", 0, 100, 50)
+filtered_df = df[df[subject] >= min_marks]
+st.subheader("Histogram")
+plt.hist(filtered_df[subject])
+st.pyplot(plt)
+st.subheader("Top Students")
+plt.bar(filtered_df["Name"], filtered_df[subject])
+st.pyplot(plt)
+
+
+Run with:
+streamlit run Practice1.py
+
+
+
+
+
+
+
+
+4] Age Based Data Explorer
+import streamlit as st
+import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+st.title("Age Based Data Explorer")
+data = {
+    "Age": [22, 25, 30, 35, 40, 28, 32, 45],
+    "Salary": [25000, 30000, 40000, 50000, 60000, 35000, 45000, 65000],
+    "Department": ["HR", "IT", "Finance", "IT", "HR", "Finance", "IT", "HR"]
+}
+df = pd.DataFrame(data)
+age_range = st.slider("Age Range", int(df["Age"].min()), int(df["Age"].max()), (20, 50))
+dept = st.selectbox("Department", ["All"] + list(df["Department"].unique()))
+filtered_df = df[(df["Age"] >= age_range[0]) & (df["Age"] <= age_range[1])]
+if dept != "All":
+    filtered_df = filtered_df[filtered_df["Department"] == dept]
+plt.figure()
+sns.boxplot(x="Department", y="Salary", data=filtered_df)
+st.pyplot(plt)
+
+
+Run with:
+streamlit run Practice2.py
+
+
+
+
+
+
+
+
+
+
+
+5] Dynamic Visualization Dashboard
+import streamlit as st
+import pandas as pd
+import matplotlib.pyplot as plt
+st.title("Dynamic Visualization Dashboard")
+data = {
+    "Name": ["Amit", "Neha", "Rahul", "Sneha", "Kiran"],
+    "Math": [85, 92, 70, 88, 60],
+    "Science": [78, 88, 65, 90, 55],
+    "English": [90, 95, 72, 85, 65]
+}
+df = pd.DataFrame(data)
+st.dataframe(df)
+subject = st.selectbox("Subject", ["Math", "Science", "English"])
+min_marks = st.slider("Minimum Marks", 0, 100, 50)
+students = st.multiselect("Students", df["Name"], default=df["Name"])
+filtered_df = df[(df["Name"].isin(students)) & (df[subject] >= min_marks)]
+chart_type = st.selectbox("Chart Type", ["Bar", "Line"])
+plt.figure()
+if chart_type == "Bar":
+    plt.bar(filtered_df["Name"], filtered_df[subject])
+else:
+    plt.plot(filtered_df["Name"], filtered_df[subject], marker='o')
+st.pyplot(plt)
+
+Run with:
+streamlit run Practice3.py
+
+
